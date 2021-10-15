@@ -98,7 +98,7 @@ function restart() {
   snake = [new Pos(100, 200), new Pos(9, 200), new Pos(80, 200)];
   apple = new Pos(snakeboard.width / 2, snakeboard.height / 2);
   da = new Pos(10, 0);
-  score = 0;
+  score = document.getElementById("score").innerHTML = 0;
 }
 
 function main() {
