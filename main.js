@@ -11,24 +11,96 @@ class Pos {
   }
 }
 
+class Obstacle {
+  pos;
+  dim;
+  hitboxes;
+
+  constructor(pos, dim, hitboxes) {
+    this.pos = pos;
+    this.dim = dim;
+    this.hitboxes = hitboxes;
+  }
+}
+
 var speed = 200;
 var score = 0;
 var snake = [new Pos(100, 200), new Pos(90, 200), new Pos(80, 200)];
 var apple = new Pos(snakeboard.width / 2, snakeboard.height / 2);
+var obstacles = [];
 var da = new Pos(10, 0);
 
+gen_obstacle();
 main();
 document.addEventListener("keydown", change_dir);
 
-function gen_pos() {
+function gen_apple_pos() {
   return new Pos(
     Math.floor(Math.random() * 40) * 10,
     Math.floor(Math.random() * 40) * 10
   );
 }
 
+function gen_obstacle_pos() {
+  let p = new Pos(
+    Math.floor(Math.random() * 34) * 10 + 30,
+    Math.floor(Math.random() * 34) * 10 + 30
+  );
+  if (hit_obstacle(p)) {
+    gen_obstacle_pos();
+  } else {
+    return p;
+  }
+}
+
+function gen_obstacle_dim() {
+  let d = new Pos(
+    Math.floor(Math.random() * 3) * 10,
+    Math.floor(Math.random() * 3) * 10
+  );
+  if (d.x === 0 || d.y === 0) {
+    return gen_obstacle_dim();
+  } else {
+    return d;
+  }
+}
+
 function gen_apple() {
-  apple = gen_pos();
+  let p = gen_apple_pos();
+  if (hit_obstacle(p)) {
+    gen_apple;
+  } else {
+    apple = p;
+  }
+}
+
+// breaks down obstacles into 10x10 grid coordinates automatically, saving typing effort
+function break_down_obstacles(dim, arrayIndex) {
+  // the grid dimensions if each grid square was 10 pixels on one side
+  let grid_dim_x = dim.x / 10;
+  let grid_dim_y = dim.y / 10;
+
+  // it loops through the 10x10 pixel grid dimensions (basically one side of the obstacles divided by 10)
+  // and it goes through row by row computing the hitbox coordinates
+  let hboxes = [];
+  for (let i = 0; i < grid_dim_y; i++) {
+    for (let j = 0; j < grid_dim_x; j++) {
+      hboxes.push(
+        new Pos(
+          obstacles[arrayIndex].pos.x + 10 * j,
+          obstacles[arrayIndex].pos.y + 10 * i
+        )
+      );
+    }
+  }
+  return hboxes;
+}
+
+function gen_obstacle() {
+  let o = new Obstacle(gen_obstacle_pos(), gen_obstacle_dim());
+  obstacles.push(o);
+  let ioo = obstacles.indexOf(o);
+  obstacles[ioo].hitboxes = break_down_obstacles(o.dim, ioo);
 }
 
 function draw_object(fstyle, pos, dim) {
@@ -43,16 +115,46 @@ function draw_snake() {
   });
 }
 
+function draw_obstacles() {
+  obstacles.forEach(function (obs) {
+    draw_object("brown", obs.pos, obs.dim);
+  });
+}
+
+function apple_eaten() {
+  score++;
+  speed -= 5;
+  document.getElementById("score").innerHTML = score;
+  gen_apple();
+  obstacles = [];
+  for (let i = 0; i < score; i++) {
+    gen_obstacle();
+  }
+}
+
 function move_snake() {
   var head = new Pos(snake[0].x + da.x, snake[0].y + da.y);
   snake.unshift(head);
   if (snake[0].x === apple.x && snake[0].y === apple.y) {
-    score++;
-    speed -= 5;
-    document.getElementById("score").innerHTML = score;
-    gen_apple();
+    apple_eaten();
   } else {
     snake.pop();
+  }
+}
+
+function hit_obstacle(obj) {
+  // first loop for the obstacles
+  for (let i = 0; i < obstacles.length; i++) {
+    // second for each obstacles hitboxes
+    for (let j = 0; j < obstacles[i].hitboxes.length; j++) {
+      // checks through each coordinate of each 10x10 part
+      if (
+        obj.x === obstacles[i].hitboxes[j].x &&
+        obj.y === obstacles[i].hitboxes[j].y
+      ) {
+        return true;
+      }
+    }
   }
 }
 
@@ -68,7 +170,8 @@ function game_end() {
     snake[0].x > snakeboard.width - 10 ||
     snake[0].y < 0 ||
     snake[0].y > snakeboard.height - 10 ||
-    eaten_self()
+    eaten_self() ||
+    hit_obstacle(snake[0])
   );
 }
 
@@ -79,7 +182,7 @@ function change_dir(evt) {
     da = new Pos(0, -10);
   }
 
-  if ((k === 40 || k === 83) && !(da.y === 10)) {
+  if ((k === 40 || k === 83) && !(da.y === -10)) {
     da = new Pos(0, 10);
   }
 
@@ -103,6 +206,8 @@ function restart() {
   da = new Pos(10, 0);
   score = document.getElementById("score").innerHTML = 0;
   speed = 200;
+  obstacles = [];
+  gen_obstacle();
 }
 
 function main() {
@@ -113,6 +218,7 @@ function main() {
     draw_object("red", apple, new Pos(10, 10));
     move_snake();
     draw_snake();
+    draw_obstacles();
     main();
   }, speed);
 }
