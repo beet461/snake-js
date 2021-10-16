@@ -17,7 +17,6 @@ var score = 0;
 var snake = [new Pos(100, 200), new Pos(9, 200), new Pos(80, 200)];
 var apple = new Pos(snakeboard.width / 2, snakeboard.height / 2);
 var da = new Pos(10, 0);
-var turned = true;
 
 main();
 document.addEventListener("keydown", change_dir);
@@ -55,7 +54,6 @@ function move_snake() {
   } else {
     snake.pop();
   }
-  turned = true;
 }
 
 function eaten_self() {
@@ -76,8 +74,6 @@ function game_end() {
 
 function change_dir(evt) {
   var k = evt.keyCode;
-
-  if (!turned) return;
 
   if ((k === 38 || k === 87) && !(da.y === 10)) {
     da = new Pos(0, -10);
