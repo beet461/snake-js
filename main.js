@@ -1,4 +1,4 @@
-const speed = 95;
+const speed = 200;
 
 var snakeboard = document.getElementById("snakeboard");
 var snakeboard_ctx = snakeboard.getContext("2d");
@@ -17,6 +17,7 @@ var score = 0;
 var snake = [new Pos(100, 200), new Pos(9, 200), new Pos(80, 200)];
 var apple = new Pos(snakeboard.width / 2, snakeboard.height / 2);
 var da = new Pos(10, 0);
+var turned = true;
 
 main();
 document.addEventListener("keydown", change_dir);
@@ -48,29 +49,35 @@ function move_snake() {
   var head = new Pos(snake[0].x + da.x, snake[0].y + da.y);
   snake.unshift(head);
   if (snake[0].x === apple.x && snake[0].y === apple.y) {
-    console.log("H");
     score++;
     document.getElementById("score").innerHTML = score;
     gen_apple();
   } else {
     snake.pop();
   }
+  turned = true;
+}
+
+function eaten_self() {
+  for (let i = 1; i < snake.length; i++) {
+    if (snake[0].x === snake[i].x && snake[0].y === snake[i].y) return true;
+  }
 }
 
 function game_end() {
-  let s_copy = snake.slice(0);
-  s_copy.shift();
   return (
     snake[0].x < 0 ||
     snake[0].x > snakeboard.width - 10 ||
     snake[0].y < 0 ||
     snake[0].y > snakeboard.height - 10 ||
-    snake[0] in s_copy
+    eaten_self()
   );
 }
 
 function change_dir(evt) {
   var k = evt.keyCode;
+
+  if (!turned) return;
 
   if ((k === 38 || k === 87) && !(da.y === 10)) {
     da = new Pos(0, -10);
