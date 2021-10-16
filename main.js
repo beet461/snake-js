@@ -1,5 +1,3 @@
-const speed = 200;
-
 var snakeboard = document.getElementById("snakeboard");
 var snakeboard_ctx = snakeboard.getContext("2d");
 
@@ -13,6 +11,7 @@ class Pos {
   }
 }
 
+var speed = 200;
 var score = 0;
 var snake = [new Pos(100, 200), new Pos(90, 200), new Pos(80, 200)];
 var apple = new Pos(snakeboard.width / 2, snakeboard.height / 2);
@@ -49,6 +48,7 @@ function move_snake() {
   snake.unshift(head);
   if (snake[0].x === apple.x && snake[0].y === apple.y) {
     score++;
+    speed -= 5;
     document.getElementById("score").innerHTML = score;
     gen_apple();
   } else {
@@ -102,6 +102,7 @@ function restart() {
   apple = new Pos(snakeboard.width / 2, snakeboard.height / 2);
   da = new Pos(10, 0);
   score = document.getElementById("score").innerHTML = 0;
+  speed = 200;
 }
 
 function main() {
