@@ -15,11 +15,13 @@ class Obstacle {
   pos;
   dim;
   hitboxes;
+  key;
 
-  constructor(pos, dim, hitboxes) {
+  constructor(pos, dim, hitboxes, key) {
     this.pos = pos;
     this.dim = dim;
     this.hitboxes = hitboxes;
+    this.key = key;
   }
 }
 
@@ -30,7 +32,6 @@ var apple = new Pos(snakeboard.width / 2, snakeboard.height / 2);
 var obstacles = [];
 var da = new Pos(10, 0);
 
-gen_obstacle();
 main();
 document.addEventListener("keydown", change_dir);
 
@@ -47,7 +48,7 @@ function gen_obstacle_pos() {
     Math.floor(Math.random() * 34) * 10 + 30
   );
   if (hit_obstacle(p)) {
-    gen_obstacle_pos();
+    return gen_obstacle_pos();
   } else {
     return p;
   }
@@ -96,11 +97,17 @@ function break_down_obstacles(dim, arrayIndex) {
   return hboxes;
 }
 
+function obs_key() {
+  return Math.floor(Math.random() * 1000);
+}
+
 function gen_obstacle() {
-  let o = new Obstacle(gen_obstacle_pos(), gen_obstacle_dim());
+  let o = new Obstacle(gen_obstacle_pos(), gen_obstacle_dim(), [], obs_key());
   obstacles.push(o);
-  let ioo = obstacles.indexOf(o);
-  obstacles[ioo].hitboxes = break_down_obstacles(o.dim, ioo);
+  obstacles[obstacles.length - 1].hitboxes = break_down_obstacles(
+    o.dim,
+    obstacles.length - 1
+  );
 }
 
 function draw_object(fstyle, pos, dim) {
@@ -124,12 +131,14 @@ function draw_obstacles() {
 function apple_eaten() {
   score++;
   speed -= 5;
-  document.getElementById("score").innerHTML = score;
-  gen_apple();
+  document.getElementById(
+    "score"
+  ).innerHTML = `<img src="./favicon.png" />${score}<img src="./favicon.png" />`;
   obstacles = [];
   for (let i = 0; i < score; i++) {
     gen_obstacle();
   }
+  gen_apple();
 }
 
 function move_snake() {
@@ -204,10 +213,12 @@ function restart() {
   snake = [new Pos(100, 200), new Pos(90, 200), new Pos(80, 200)];
   apple = new Pos(snakeboard.width / 2, snakeboard.height / 2);
   da = new Pos(10, 0);
-  score = document.getElementById("score").innerHTML = 0;
+  score = 0;
+  document.getElementById(
+    "score"
+  ).innerHTML = `<img src="./favicon.png" />0<img src="./favicon.png" />`;
   speed = 200;
   obstacles = [];
-  gen_obstacle();
 }
 
 function main() {
