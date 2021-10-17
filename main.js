@@ -56,8 +56,8 @@ function gen_obstacle_pos() {
 
 function gen_obstacle_dim() {
   let d = new Pos(
-    Math.floor(Math.random() * 3) * 10,
-    Math.floor(Math.random() * 3) * 10
+    Math.floor(Math.random() * 4) * 10,
+    Math.floor(Math.random() * 4) * 10
   );
   if (d.x === 0 || d.y === 0) {
     return gen_obstacle_dim();
