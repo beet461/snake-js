@@ -124,7 +124,7 @@ function draw_snake() {
 
 function draw_obstacles() {
   obstacles.forEach(function (obs) {
-    draw_object("brown", obs.pos, obs.dim);
+    draw_object("silver", obs.pos, obs.dim);
   });
 }
 
@@ -133,7 +133,7 @@ function apple_eaten() {
   speed -= 5;
   document.getElementById(
     "score"
-  ).innerHTML = `<img src="./favicon.png" />${score}<img src="./favicon.png" />`;
+  ).innerHTML = `<img src="./snek.png" />${score}<img src="./snek.png" />`;
   obstacles = [];
   for (let i = 0; i < score; i++) {
     gen_obstacle();
@@ -216,7 +216,7 @@ function restart() {
   score = 0;
   document.getElementById(
     "score"
-  ).innerHTML = `<img src="./favicon.png" />0<img src="./favicon.png" />`;
+  ).innerHTML = `<img src="./snek.png" />0<img src="./snek.png" />`;
   speed = 200;
   obstacles = [];
 }
