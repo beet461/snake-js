@@ -9,18 +9,29 @@
   </head>
   <body>
     <div id="score"><img src="./snek.png" />0<img src="./snek.png" /></div>
-    <canvas id="snakeboard" width="400" height="400"></canvas>
+    <div class="board-wrapper border-gradient border-gradient-green">
+      <canvas id="snakeboard" width="400" height="400"></canvas>
+    </div>
 
     <style>
-      #snakeboard {
+      .board-wrapper {
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         margin-top: 50px;
-        border-radius: 5px;
-        background-color: black;
-        border: 5px solid white;
+        width: 400px;
+        height: 400px;
+        background: url("./snake_texture.jpg");
+        background-size: cover;
+      }
+      .border-gradient {
+        border: 10px solid;
+        border-image-slice: 1;
+        border-width: 5px;
+      }
+      .border-gradient-green {
+        border-image-source: linear-gradient(to left, #00c853, #b2ff59);
       }
       #score {
         text-align: center;
@@ -28,8 +39,10 @@
         margin-bottom: 50px;
         color: white;
       }
+
       body {
-        background-color: rgb(94, 94, 94);
+        background: url("./stripes.png");
+        background-repeat: repeat-x repeat-y;
       }
     </style>
     <script src="main.js"></script>

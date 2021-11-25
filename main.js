@@ -118,7 +118,7 @@ function draw_object(fstyle, pos, dim) {
 
 function draw_snake() {
   snake.forEach(function (pos) {
-    draw_object("green", pos, new Pos(10, 10));
+    draw_object("lime", pos, new Pos(10, 10));
   });
 }
 
@@ -205,8 +205,7 @@ function change_dir(evt) {
 }
 
 function clear() {
-  snakeboard_ctx.fillStyle = "black";
-  snakeboard_ctx.fillRect(0, 0, snakeboard.width, snakeboard.height);
+  snakeboard_ctx.clearRect(0, 0, snakeboard.width, snakeboard.height);
 }
 
 function restart() {
